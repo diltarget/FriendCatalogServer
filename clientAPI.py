@@ -15,6 +15,8 @@
 import os
 import requests
 from flask import Flask, jsonify, request
+from itsdangerous import (TimedJSONWebSignatureSerializer
+                          as Serializer, BadSignature, SignatureExpired)
 import couchdb
 import config
 
@@ -65,7 +67,6 @@ def Register():
         return jsonify(results=message)
     doc_id, doc_rev = db.save({'_id':username,'email':email,'password':password})
     message["success"] = True
-    message["token"] = "Null"
     
     return jsonify(results=message)
 
@@ -79,11 +80,18 @@ def Login():
     query_password = request.args.get('password')
     db = get_db('friend_db')
     if db.get(query_username) and db[query_username]["password"] == query_password:
-        message['success']=True
-        message['message']=""
-        message['token']="NULL"
+        message['success'] = True
+        message['message'] = ""
+        message['token'] = get_auth_token()
+        db.save({'token': message['token']})
         return jsonify(message)
     return jsonify(message)
+
+@app.route('/api/token')
+@auth.login_required
+def get_auth_token():
+    token = g.user.generate_auth_token()
+    return jsonify({ 'token': token.decode('ascii') })
 
 @app.route('/api/myprofile')
 def MyProfile():
@@ -137,6 +145,18 @@ def RequestFriend():
         'message': 'unimplemented'
     }
     return jsonify(results=friendrequest)
+
+##############################
+#       static methods
+##############################
+
+def generate_auth_token(self, expiration = 600):
+        s = Serializer(app.config['SECRET_KEY'], expires_in = expiration)
+        return s.dumps({ 'id': self.id })
+
+##############################
+#            main
+##############################
 
 port = os.getenv('PORT', '5000')
 if __name__ == "__main__":
