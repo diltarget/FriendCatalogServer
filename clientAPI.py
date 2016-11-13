@@ -78,28 +78,34 @@ def Welcome():
 def Register():
     message = {
         'success': False,
-        'message': 'unimplemented'
     }
+    db = get_db('friend_db')
+    username = request.args.get('username')
+    password = request.args.get('password')
+    email = request.args.get('email')
+    if db[username]:
+        return jsonify(results=message)
+    db.save({'_id':username,'email':email,'password':password})
+    message["success"] = True
+    message["token"] = "Null"
+    
     return jsonify(results=message)
 
 @app.route('/api/login')
 def Login():
+    message = {
+        'success': False
+    }
     query_username = request.args.get('username')
     query_password = request.args.get('password')
-#    return(query_username + ', ' + query_password)
-    test = get_doc(query_username)
-    print(test)
-#    valid_password = valid_pass(query_username, query_password)
-#    if valid_password:
-#        return('Valid login')
-#    else:
-#        return('Failed login')
-#    message = {
-#        'success': False,
-#        'message': 'unimplemented',
-#        'token': 'dfsdjfdsfw4q4'
-#    }
-#    return jsonify(results=message)
+    stuff = request.args.get('wow')
+    print(stuff)
+    db = get_db('friend_db')
+    if db[query_username] and db[query_username]["password"] == query_password:
+        message['success']=True
+        message['token']="NULL"
+        return jsonify(message)
+    return jsonify(message)
 
 @app.route('/api/myprofile')
 def MyProfile():
