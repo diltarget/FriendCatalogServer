@@ -18,8 +18,11 @@ from flask import Flask, jsonify, request
 from itsdangerous import TimedJSONWebSignatureSerializer, BadSignature, SignatureExpired
 import couchdb
 import config
+import twitter_helper
 
 app = Flask(__name__)
+dbname = 'friend_db'
+
 
 # cl_username = '91819ede-4166-4871-bdb4-c58ee8e44e2c-bluemix'
 # cl_password = "77f3fee25e14cd0c13c8ec0cf6d9b8aa364ef63c53dd5d3c257570916855a553"
@@ -35,7 +38,7 @@ def get_db(table):
 @app.route('/dbquery/<query>')
 def query_db(query):
     # Select db that has this query
-    db = get_db('friend_db')
+    db = get_db(dbname)
     map_fun = '''function(doc) {
         if (doc.email == query)
             emit(doc.name, null);
@@ -56,7 +59,7 @@ def Register():
     message = {
         'success': False,
     }
-    db = get_db('friend_db')
+    db = get_db(dbname)
     username = request.args.get('username')
     password = request.args.get('password')
     email = request.args.get('email')
@@ -77,7 +80,7 @@ def Login():
     }
     query_username = request.args.get('username')
     query_password = request.args.get('password')
-    db = get_db('friend_db')
+    db = get_db(dbname)
     if db.get(query_username) and db[query_username]["password"] == query_password:
         message['success'] = True
         message['message'] = ""
@@ -85,6 +88,23 @@ def Login():
         db.save({'token': message['token']})
         return jsonify(message)
     return jsonify(message)
+
+@app.route('/api/twitter/<username>')
+def getTwitter(username):
+    """
+    Get twitter JSON from api
+    :param username:
+    :return:
+    """
+    message = {
+        'success': False,
+        'message': 'Not an active username or twitter account'
+    }
+    db = get_db(dbname)
+    if db.get(username):
+        handle = db[username]['twitter']
+    data = twitter_helper.process_tweets(handle)
+    return data
 
 @app.route('/api/token')
 def get_auth_token():
