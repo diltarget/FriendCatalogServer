@@ -13,9 +13,23 @@
 # limitations under the License.
 
 import os
+import requests
 from flask import Flask, jsonify
 
 app = Flask(__name__)
+
+@app.route('/dbquery/<query>')
+def query_db(query):
+    vcap = json.loads(os.getenv("VCAP_SERVICES"))['cloudantNoSQLDB']
+
+    cl_username = vcap[0]['credentials']['username']
+    cl_password = vcap[0]['credentials']['password']
+
+    url         = vcap[0]['credentials']['url']
+    auth        = ( cl_username, cl_password )
+
+    return requests.put( url + '/' + query, auth=auth )
+        
 
 @app.route('/')
 def Welcome():
