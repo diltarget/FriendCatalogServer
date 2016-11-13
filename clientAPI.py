@@ -15,8 +15,7 @@
 import os
 import requests
 from flask import Flask, jsonify, request
-from itsdangerous import (TimedJSONWebSignatureSerializer
-                          as Serializer, BadSignature, SignatureExpired)
+from itsdangerous import TimedJSONWebSignatureSerializer, BadSignature, SignatureExpired
 import couchdb
 import config
 
@@ -150,7 +149,7 @@ def RequestFriend():
 ##############################
 
 def generate_auth_token(self, expiration = 600):
-        s = Serializer(app.config['SECRET_KEY'], expires_in = expiration)
+        s = TimedJSONWebSignatureSerializer(app.config['SECRET_KEY'], expires_in = expiration)
         return s.dumps({ 'id': self.id })
 
 ##############################
