@@ -24,7 +24,7 @@ from flask import Flask, jsonify
 
 app = Flask(__name__)
 
-@app.route('/dbquery/')
+@app.route('/dbquery/<query>')
 def query_db(query):
     #vcap = json.loads(os.getenv("VCAP_SERVICES"))['cloudantNoSQLDB']
 
@@ -36,7 +36,8 @@ def query_db(query):
 
     auth        = ( cl_username, cl_password )
 
-    return requests.put( url + '/_all_docs', auth=auth )
+    r = requests.post( url + '/_all_docs', auth=auth )
+    return r.text
 
 
         
