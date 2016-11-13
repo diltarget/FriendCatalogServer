@@ -29,6 +29,15 @@ def Register():
     }
     return jsonify(results=message)
 
+@app.route('/api/register')
+def Login():
+    message = {
+        'success': False,
+        'message': 'unimplemented',
+        'token': 'dfsdjfdsfw4q4'
+    }
+    return jsonify(results=message)
+
 @app.route('/api/myprofile')
 def MyProfile():
     profiledata = {
