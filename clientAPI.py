@@ -71,15 +71,15 @@ def Register():
 @app.route('/api/login')
 def Login():
     message = {
-        'success': False
+        'success': False,
+        'message': 'Username and password combination do not match'
     }
     query_username = request.args.get('username')
     query_password = request.args.get('password')
-    stuff = request.args.get('wow')
-    print(stuff)
     db = get_db('friend_db')
-    if db.get(username) and db[query_username]["password"] == query_password:
+    if db.get(query_username) and db[query_username]["password"] == query_password:
         message['success']=True
+        message['message']=""
         message['token']="NULL"
         return jsonify(message)
     return jsonify(message)
