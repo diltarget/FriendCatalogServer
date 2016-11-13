@@ -16,18 +16,20 @@ import os
 import requests
 from flask import Flask, jsonify
 import couchdb
-    
+import config
+
 app = Flask(__name__)
 
-cl_username = '91819ede-4166-4871-bdb4-c58ee8e44e2c-bluemix'
-cl_password = "77f3fee25e14cd0c13c8ec0cf6d9b8aa364ef63c53dd5d3c257570916855a553"
+# cl_username = '91819ede-4166-4871-bdb4-c58ee8e44e2c-bluemix'
+# cl_password = "77f3fee25e14cd0c13c8ec0cf6d9b8aa364ef63c53dd5d3c257570916855a553"
+
 
 @app.route('/dbquery/<query>')
 def query_db(query):
-    couch = couchdb.Server("https://%s.cloudant.com" % cl_username)
-    couch.resource.credentials = (cl_username, cl_password)
+    return 'Hello world'
+    couch = couchdb.Server(config.db_url)
+    couch.resource.credentials = (config.db_username, config.db_password)
     db = couch['friend_db']
-    
     return str(db.name)        
 
 @app.route('/')

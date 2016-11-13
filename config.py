@@ -23,3 +23,10 @@ twitter_access_secret = "IqfjjEj9mvDNuBq8EpH7tns9ONVyjA2Z2zdbWN2wKok4y"
 pi_url = "https://gateway.watsonplatform.net/personality-insights/api"
 pi_username = "87725ef2-e5ce-4b71-a9a6-cf3ef18fdfd8"
 pi_password = "olxjgEFwsNia"
+
+
+# Database information
+db_username = '91819ede-4166-4871-bdb4-c58ee8e44e2c-bluemix'
+db_password = "77f3fee25e14cd0c13c8ec0cf6d9b8aa364ef63c53dd5d3c257570916855a553"
+db_url = "https://91819ede-4166-4871-bdb4-c58ee8e44e2c-bluemix.cloudant.com"
+
