@@ -3,8 +3,8 @@ applications:
   memory: 128M
   instances: 1
   domain: mybluemix.net
-  name: friendcatalog2
-  host: friendcatalog2
+  name: friendcatalog
+  host: friendcatalog
   disk_quota: 1024M
   services:
   - availability-monitoring-auto
