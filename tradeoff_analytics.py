@@ -20,7 +20,7 @@ def define_columns():
               ]
     for trait in traits:
         trait_dic = {}
-        trait_dic["key"] = trait['name'].lower().replace(" ", "_")
+        trait_dic["key"] = trait['name']
         trait_dic["type"] = "numeric"
         trait_dic["goal"] = "min" # What should this be? Minimize or maximize the objective function?
         trait_dic["range"] = {"low": trait['low'], 'high': trait['high']}

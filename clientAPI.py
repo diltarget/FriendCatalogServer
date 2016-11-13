@@ -92,6 +92,7 @@ def Login():
 @app.route('/api/twitter/<username>')
 def getTwitter(username):
     """
+    Test function to see if scraping is working.
     Get twitter JSON from api
     :param username:
     :return:
@@ -104,7 +105,37 @@ def getTwitter(username):
     if db.get(username):
         handle = db[username]['twitter']
     data = twitter_helper.process_tweets(handle)
+    message['success'] = True
     return data
+
+@app.route('/api/personality/<username>')
+def inject_personality(username):
+    """
+    Injects Big Five personality traits into the database by scraping their twitter data and using IBM's
+    Personality Insights to calculate the traits.
+    :param username:
+    :return:
+    """
+    from personality_insights import send_pi_request, extract_personality
+    message = {
+        'success': False,
+        'message': 'Error: Personality not injected into {}. User may not exist or extraction failed'.format(username)
+    }
+    db = get_db(db_name)
+    doc = db.get(username)
+    if doc:
+        # Extract personality dictionary
+        handle = db[username]['twitter']
+        pi_data = send_pi_request(handle)
+        personality = extract_personality(pi_data)
+        # Why isn't this working? Need to insert
+        doc['personality'] = personality
+        db.save(doc)
+        message['success'] = True
+        message['message'] = 'Personality: {}'.format(personality)
+        return jsonify(message)
+    return jsonify(message)
+
 
 @app.route('/api/token')
 def get_auth_token():

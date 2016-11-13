@@ -30,11 +30,12 @@ def extract_personality(pi_data):
     Extract big 5 personality traits from PI json output and places it in a dictionary
     :param pi_data:
     :return:
+        Dictionary with key:value equaling trait name: value
     """
     big5 = {}
     personality = pi_data['tree']['children'][0]['children'][0]['children']
     for trait in personality:
-        name = trait['name']
+        name = trait['name'].lower().replace(" ", "_")
         value = trait['percentage']
         big5[name] = value
     return big5
