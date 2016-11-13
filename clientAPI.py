@@ -28,7 +28,7 @@ def query_db(query):
     url         = vcap[0]['credentials']['url']
     auth        = ( cl_username, cl_password )
 
-    return requests.put( url + '/' + query, auth=auth )
+    return requests.get( url + '/' + query, auth=auth )
         
 
 @app.route('/')
