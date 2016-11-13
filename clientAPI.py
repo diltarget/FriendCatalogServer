@@ -21,24 +21,66 @@ app = Flask(__name__)
 def Welcome():
     return app.send_static_file('index.html')
 
-@app.route('/myapp')
-def WelcomeToMyapp():
-    return 'Welcome again to my app running on Bluemix!'
-
-@app.route('/api/people')
-def GetPeople():
-    list = [
-        {'name': 'John', 'age': 28},
-        {'name': 'Bill', 'val': 26}
-    ]
-    return jsonify(results=list)
-
-@app.route('/api/people/<name>')
-def SayHello(name):
+@app.route('/api/register')
+def Register():
     message = {
-        'message': 'Hello ' + name
+        'success': False,
+        'message': 'unimplemented'
     }
     return jsonify(results=message)
+
+@app.route('/api/myprofile')
+def MyProfile():
+    profiledata = {
+        'success': False,
+        'message': 'unimplemented'
+    }
+    return jsonify(results=profiledata)
+
+
+@app.route('/api/editprofile')
+def EditProfile():
+    editmessage = {
+        'success': False,
+        'message': 'unimplemented'
+    }
+    return jsonify(results=editmessage)
+
+@app.route('/api/register')
+def Search():
+    searchresults = {
+        'success': False,
+        'message': 'unimplemented',
+        'list': [
+            {'name': 'John', 'age': 28},
+            {'name': 'Bill', 'val': 26}
+        ]
+    }
+    return jsonify(results=searchresults)
+
+@app.route('/api/viewprofile/<id>')
+def ViewProfile():
+    profiledata = {
+        'success': False,
+        'message': 'unimplemented'
+    }
+    return jsonify(results=profiledata)
+
+@app.route('/api/getfriends')
+def GetFriends():
+    friendlist = {
+        'success': False,
+        'message': 'unimplemented'
+    }
+    return jsonify(results=friendlist)
+
+@app.route('/api/resquestfriend/<id>')
+def RequestFriend():
+    friendrequest = {
+        'success': False,
+        'message': 'unimplemented'
+    }
+    return jsonify(results=friendrequest)
 
 port = os.getenv('PORT', '5000')
 if __name__ == "__main__":
