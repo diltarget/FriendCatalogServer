@@ -27,6 +27,7 @@ app = Flask(__name__)
 def get_db(table):
     couch = couchdb.Server(config.db_url)
     couch.resource.credentials = (config.db_username, config.db_password)
+    print(config.db_username, config.db_password)
     db = couch[table]
     return db
 
@@ -45,31 +46,6 @@ def query_db(query):
         print(id, info)
     return str(db.name)
 
-
-def get_doc(email):
-    db = get_db('friend_db')
-    map_fun = '''
-    function(doc) {
-      if (!doc.email) return;
-      if ()
-      emit(doc, null);
-    }
-    '''
-    for row in db.query(map_fun):
-        return(row)
-
-def valid_pass(email, password):
-    db = get_db('friend_db')
-    map_fun = '''function(doc) {
-        if (doc.email == email)
-            emit(doc.password, null);
-    }'''
-    for pass_check in db.query(map_fun):
-        if pass_check == password:
-            return True
-    return False
-
-
 @app.route('/')
 def Welcome():
     return app.send_static_file('index.html')
@@ -83,9 +59,10 @@ def Register():
     username = request.args.get('username')
     password = request.args.get('password')
     email = request.args.get('email')
-    if db[username]:
+    print(db.get(username))
+    if db.get(username):
         return jsonify(results=message)
-    db.save({'_id':username,'email':email,'password':password})
+    doc_id, doc_rev = db.save({'_id':username,'email':email,'password':password})
     message["success"] = True
     message["token"] = "Null"
     
@@ -101,7 +78,7 @@ def Login():
     stuff = request.args.get('wow')
     print(stuff)
     db = get_db('friend_db')
-    if db[query_username] and db[query_username]["password"] == query_password:
+    if db.get(username) and db[query_username]["password"] == query_password:
         message['success']=True
         message['token']="NULL"
         return jsonify(message)
