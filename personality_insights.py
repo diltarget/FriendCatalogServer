@@ -1,9 +1,10 @@
 import json
-
+import os
 import requests
 
 import config as config
 import twitter_helper as twitter_helper
+from watson_developer_cloud import PersonalityInsightsV3
 
 
 def send_pi_request(handle):
@@ -41,10 +42,11 @@ def extract_personality(pi_data):
 if __name__ == '__main__':
     users = ['DaveRench', 'soc_brianne', 'gravitysydney', 'KevinReuning']
     user = users[2]
-    data = send_pi_request(user)
-#    filename = "person2.json"
-#    with open(filename) as data_file:
-#        pi_data = json.load(data_file)
+#    data = send_pi_request(user)
+    filename = "./data/person2.json"
+    with open(os.path.join(os.path.dirname(__file__), './data/person.json')) as pi_json:
+        data = json.load(pi_json)
     pdata = extract_personality(data)
-    new_data = {'name': user, 'personality': pdata}
+    new_data = {'handle': user, 'personality': pdata}
     print(new_data)
+
