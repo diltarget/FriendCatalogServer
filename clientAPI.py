@@ -15,10 +15,11 @@
 import os
 import requests
 from flask import Flask, jsonify
+from cloudant.client import Cloudant
 
 app = Flask(__name__)
 
-@app.route('/dbquery/<query>')
+@app.route('/dbquery/')
 def query_db(query):
     vcap = json.loads(os.getenv("VCAP_SERVICES"))['cloudantNoSQLDB']
 
@@ -28,7 +29,21 @@ def query_db(query):
     url         = vcap[0]['credentials']['url']
     auth        = ( cl_username, cl_password )
 
-    return requests.get( url + '/' + query, auth=auth )
+    
+    client = Cloudant(cl_username, cl_password, account='friendcatalog')
+    client.connect()
+
+    # Perform client tasks...
+    session = client.session()
+    #print 'Username: {0}'.format(session['userCtx']['name'])
+    text = 'Databases: {0}'.format(client.all_dbs())
+
+    # Disconnect from the server
+    client.disconnect()
+
+    return text
+
+
         
 
 @app.route('/')
