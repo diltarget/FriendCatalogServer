@@ -11,37 +11,32 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+"""{
+  "username": "91819ede-4166-4871-bdb4-c58ee8e44e2c-bluemix",
+  "password": "77f3fee25e14cd0c13c8ec0cf6d9b8aa364ef63c53dd5d3c257570916855a553",
+  "host": "91819ede-4166-4871-bdb4-c58ee8e44e2c-bluemix.cloudant.com",
+  "port": 443,
+  "url": "https://91819ede-4166-4871-bdb4-c58ee8e44e2c-bluemix:77f3fee25e14cd0c13c8ec0cf6d9b8aa364ef63c53dd5d3c257570916855a553@91819ede-4166-4871-bdb4-c58ee8e44e2c-bluemix.cloudant.com"
+}"""
 import os
 import requests
 from flask import Flask, jsonify
-from cloudant.client import Cloudant
 
 app = Flask(__name__)
 
 @app.route('/dbquery/')
 def query_db(query):
-    vcap = json.loads(os.getenv("VCAP_SERVICES"))['cloudantNoSQLDB']
+    #vcap = json.loads(os.getenv("VCAP_SERVICES"))['cloudantNoSQLDB']
 
-    cl_username = vcap[0]['credentials']['username']
-    cl_password = vcap[0]['credentials']['password']
+    cl_username = '91819ede-4166-4871-bdb4-c58ee8e44e2c-bluemix'
+    cl_password = "77f3fee25e14cd0c13c8ec0cf6d9b8aa364ef63c53dd5d3c257570916855a553"
 
-    url         = vcap[0]['credentials']['url']
+    url         = "https://91819ede-4166-4871-bdb4-c58ee8e44e2c-bluemix:77f3fee25e14cd0c13c8ec0cf6d9b8aa364ef63c53dd5d3c257570916855a553@91819ede-4166-4871-bdb4-c58ee8e44e2c-bluemix.cloudant.com"
     auth        = ( cl_username, cl_password )
 
-    
-    client = Cloudant(cl_username, cl_password, account='friendcatalog')
-    client.connect()
+    auth        = ( cl_username, cl_password )
 
-    # Perform client tasks...
-    session = client.session()
-    #print 'Username: {0}'.format(session['userCtx']['name'])
-    text = 'Databases: {0}'.format(client.all_dbs())
-
-    # Disconnect from the server
-    client.disconnect()
-
-    return text
+    return requests.put( url + '/_all_docs', auth=auth )
 
 
         
