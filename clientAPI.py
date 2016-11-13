@@ -21,21 +21,28 @@
 import os
 import requests
 from flask import Flask, jsonify
-
+import couchdb
+    
 app = Flask(__name__)
 
 @app.route('/dbquery/<query>')
 def query_db(query):
     #vcap = json.loads(os.getenv("VCAP_SERVICES"))['cloudantNoSQLDB']
 
+    
     cl_username = '91819ede-4166-4871-bdb4-c58ee8e44e2c-bluemix'
     cl_password = "77f3fee25e14cd0c13c8ec0cf6d9b8aa364ef63c53dd5d3c257570916855a553"
 
-    url         = "https://91819ede-4166-4871-bdb4-c58ee8e44e2c-bluemix:77f3fee25e14cd0c13c8ec0cf6d9b8aa364ef63c53dd5d3c257570916855a553@91819ede-4166-4871-bdb4-c58ee8e44e2c-bluemix.cloudant.com"
+    url         = "https://91819ede-4166-4871-bdb4-c58ee8e44e2c-bluemix.cloudant.com"
     auth        = ( cl_username, cl_password )
 
     auth        = ( cl_username, cl_password )
 
+    couch = couchdb.Server("https://91819ede-4166-4871-bdb4-c58ee8e44e2c-bluemix.cloudant.com")
+    couch.resource.credentials = (cl_username, cl_password)
+    db = couch['friend_db']
+    for doc in db:
+        return str(doc) 
     r = requests.post( url + '/_all_docs', auth=auth )
     return r.text
 
