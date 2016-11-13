@@ -26,10 +26,12 @@ app = Flask(__name__)
 
 @app.route('/dbquery/<query>')
 def query_db(query):
-    return 'Hello world'
     couch = couchdb.Server(config.db_url)
     couch.resource.credentials = (config.db_username, config.db_password)
     db = couch['friend_db']
+    for id in db:
+        doc = db[id]
+        print(id, doc)
     return str(db.name)        
 
 @app.route('/')
