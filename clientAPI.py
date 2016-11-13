@@ -18,10 +18,10 @@ from flask import Flask, jsonify, request
 from itsdangerous import TimedJSONWebSignatureSerializer, BadSignature, SignatureExpired
 import couchdb
 import config
+from config import db_name
 import twitter_helper
 
 app = Flask(__name__)
-dbname = 'friend_db'
 
 
 # cl_username = '91819ede-4166-4871-bdb4-c58ee8e44e2c-bluemix'
@@ -38,7 +38,7 @@ def get_db(table):
 @app.route('/dbquery/<query>')
 def query_db(query):
     # Select db that has this query
-    db = get_db(dbname)
+    db = get_db(db_name)
     map_fun = '''function(doc) {
         if (doc.email == query)
             emit(doc.name, null);
@@ -59,7 +59,7 @@ def Register():
     message = {
         'success': False,
     }
-    db = get_db(dbname)
+    db = get_db(db_name)
     username = request.args.get('username')
     password = request.args.get('password')
     email = request.args.get('email')
@@ -80,7 +80,7 @@ def Login():
     }
     query_username = request.args.get('username')
     query_password = request.args.get('password')
-    db = get_db(dbname)
+    db = get_db(db_name)
     if db.get(query_username) and db[query_username]["password"] == query_password:
         message['success'] = True
         message['message'] = ""
@@ -100,7 +100,7 @@ def getTwitter(username):
         'success': False,
         'message': 'Not an active username or twitter account'
     }
-    db = get_db(dbname)
+    db = get_db(db_name)
     if db.get(username):
         handle = db[username]['twitter']
     data = twitter_helper.process_tweets(handle)
