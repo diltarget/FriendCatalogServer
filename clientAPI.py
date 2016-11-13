@@ -61,6 +61,7 @@ def Register():
     email = request.args.get('email')
     print(db.get(username))
     if db.get(username):
+        message["message"]="username already exists"
         return jsonify(results=message)
     doc_id, doc_rev = db.save({'_id':username,'email':email,'password':password})
     message["success"] = True
