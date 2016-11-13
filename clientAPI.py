@@ -14,7 +14,7 @@
 
 import os
 import requests
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 import couchdb
 import config
 
@@ -24,15 +24,51 @@ app = Flask(__name__)
 # cl_password = "77f3fee25e14cd0c13c8ec0cf6d9b8aa364ef63c53dd5d3c257570916855a553"
 
 
-@app.route('/dbquery/<query>')
-def query_db(query):
+def get_db(table):
     couch = couchdb.Server(config.db_url)
     couch.resource.credentials = (config.db_username, config.db_password)
-    db = couch['friend_db']
+    db = couch[table]
+    return db
+
+@app.route('/dbquery/<query>')
+def query_db(query):
+    # Select db that has this query
+    db = get_db('friend_db')
+    map_fun = '''function(doc) {
+        if (doc.email == query)
+            emit(doc.name, null);
+    }
+    '''
     for id in db:
         doc = db[id]
-        print(id, doc)
-    return str(db.name)        
+        info = {key: doc[key] for key in doc}
+        print(id, info)
+    return str(db.name)
+
+
+def get_doc(email):
+    db = get_db('friend_db')
+    map_fun = '''
+    function(doc) {
+      if (!doc.email) return;
+      if ()
+      emit(doc, null);
+    }
+    '''
+    for row in db.query(map_fun):
+        return(row)
+
+def valid_pass(email, password):
+    db = get_db('friend_db')
+    map_fun = '''function(doc) {
+        if (doc.email == email)
+            emit(doc.password, null);
+    }'''
+    for pass_check in db.query(map_fun):
+        if pass_check == password:
+            return True
+    return False
+
 
 @app.route('/')
 def Welcome():
@@ -46,14 +82,24 @@ def Register():
     }
     return jsonify(results=message)
 
-@app.route('/api/register')
+@app.route('/api/login')
 def Login():
-    message = {
-        'success': False,
-        'message': 'unimplemented',
-        'token': 'dfsdjfdsfw4q4'
-    }
-    return jsonify(results=message)
+    query_username = request.args.get('username')
+    query_password = request.args.get('password')
+#    return(query_username + ', ' + query_password)
+    test = get_doc(query_username)
+    print(test)
+#    valid_password = valid_pass(query_username, query_password)
+#    if valid_password:
+#        return('Valid login')
+#    else:
+#        return('Failed login')
+#    message = {
+#        'success': False,
+#        'message': 'unimplemented',
+#        'token': 'dfsdjfdsfw4q4'
+#    }
+#    return jsonify(results=message)
 
 @app.route('/api/myprofile')
 def MyProfile():
